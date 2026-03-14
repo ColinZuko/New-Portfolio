@@ -78,14 +78,7 @@ const Contact = ({ darkMode }) => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 items-center">
-          {/* Image */}
-          <div
-            className="flex justify-center order-2 lg:order-1"
-            data-aos="fade-right"
-          >
-          </div>
-
+        <div className="flex justify-center">
           {/* Form */}
           <form
             style={{
@@ -94,7 +87,7 @@ const Contact = ({ darkMode }) => {
                 : 'linear-gradient(to right, #ffffff, #f9fafb)',
               borderColor: darkMode ? '#374151' : '#e5e7eb',
             }}
-            className="rounded-xl p-4 sm:p-5 md:p-6 lg:p-8 border shadow-lg order-1 lg:order-2"
+            className="rounded-xl p-4 sm:p-5 md:p-6 lg:p-8 border shadow-lg max-w-2xl w-full"
             data-aos="fade-left"
             onSubmit={handleSubmit}
           >
