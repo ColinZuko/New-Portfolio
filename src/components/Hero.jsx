@@ -1,7 +1,7 @@
 import instagram from '../assets/instagram.png'
 import github from '../assets/github.png'
 import youtube from '../assets/youtube.png'
-import hero from '../assets/realCracker.png'
+import hero from '../assets/RealCracker.png'
 import CV from '../assets/Colin.pdf'
 import { DownloadIcon, Import, Mail } from 'lucide-react'
 
