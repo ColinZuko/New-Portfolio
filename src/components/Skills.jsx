@@ -1,5 +1,5 @@
 import Figma from '../assets/figma.png'
-import HTML from '../assets/html.png'
+import HTML from '../assets/HTML.png'
 import CSS from '../assets/css.png'
 import react from '../assets/react.png'
 import tailwind from '../assets/tailwind.png'
