@@ -1,5 +1,5 @@
 import { FaExternalLinkAlt, FaGithub } from 'react-icons/fa'
-import project1 from '../assets/project1.png'
+import project1 from '../assets/project-1.png'
 import project2 from '../assets/parentproject.png'
 import project3 from '../assets/fixxar.png'
 import project4 from '../assets/camping.png'
@@ -11,8 +11,8 @@ const Projects = ({ darkMode }) => {
   const projects = [
     {
       id: 1,
-      title: 'Task Tracker',
-      desc: 'MERN project where I learned the basics and applied it to make a task tracker',
+      title: 'Food Blog',
+      desc: 'MERN project where I learned the basics and applied it to make a food blog',
       image: project1,
       tags: ['React', 'Node.js', 'MongoDB', 'Express.js'],
       demoLink: 'https://github.com/ColinZuko/Mern-Practice',

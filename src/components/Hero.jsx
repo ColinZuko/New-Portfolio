@@ -4,6 +4,7 @@ import youtube from '../assets/youtube.png'
 import hero from '../assets/realCracker.png'
 import CV from '../assets/Colin.pdf'
 import { DownloadIcon, Import, Mail } from 'lucide-react'
+import { Button } from "@/components/ui/button"
 
 const Hero = ({ darkMode }) => {
   const socialIcons = [
@@ -103,21 +104,21 @@ const Hero = ({ darkMode }) => {
                 data-aos-delay="700"
               >
                 <a href={CV} download className="w-full sm:w-auto">
-                  <button
-                    className="w-full sm:w-auto inline-flex items-center justify-center text-white bg-linear-to-r from-green-500 to-green-700 border-0 py-3 px-6 sm:px-8 hover:shadow-[0_0_40px_rgb(0,100,0,0.7)] rounded-full text-base sm:text-lg font-semibold transition-all duration-300 transform"
+                  <Button
+                    className="w-full h-full sm:w-auto inline-flex items-center justify-center text-white bg-linear-to-r from-green-500 to-green-700 border-0 py-3 px-6 sm:px-8 hover:shadow-[0_0_40px_rgb(0,100,0,0.7)] rounded-full text-base sm:text-lg font-semibold transition-all duration-300 transform"
                   >
                     <DownloadIcon className="w-4 h-4 sm:h-5 sm:w-5 mr-2" />
                     Download CV
-                  </button>
+                  </Button>
                 </a>
 
                 <a href="#contact" className="w-full sm:w-auto">
-                  <button
-                    className={`w-full sm:w-auto inline-flex items-center justify-center ${theme.buttonSecondary} border-0 py-3 px-6 sm:px-8 hover:shadow-[0_0_40px_rgb(0,100,0,0.7)] rounded-full text-base sm:text-lg font-semibold transition-all duration-300 transform`}
+                  <Button
+                    className={`w-full h-full sm:w-auto inline-flex items-center justify-center ${theme.buttonSecondary} border-0 py-3 px-6 sm:px-8 hover:shadow-[0_0_40px_rgb(0,100,0,0.7)] rounded-full text-base sm:text-lg font-semibold transition-all duration-300 transform`}
                   >
                     <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                     Contact Me
-                  </button>
+                  </Button>
                 </a>
               </div>
             </div>

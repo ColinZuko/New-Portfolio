@@ -1,5 +1,9 @@
 import { useState } from 'react';
 import emailjs from '@emailjs/browser';
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
+
 
 const Contact = ({ darkMode }) => {
   const [formData, setFormData] = useState({
@@ -14,8 +18,8 @@ const Contact = ({ darkMode }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     emailjs.send(
-      'service_pcbdhfg', // Replace with your EmailJS Service ID
-      'template_q1hy19b', // Replace with your EmailJS Template ID
+      import.meta.env.VITE_EMAILJS_SERVICE, 
+    import.meta.env.VITE_EMAILJS_TEMPLATE, // Replace with your EmailJS Template ID
       {
         from_name: `${formData.firstName} ${formData.lastName}`,
         from_email: formData.email,
@@ -23,7 +27,7 @@ const Contact = ({ darkMode }) => {
         message: formData.message,
         to_email: 'Colin.delsink@gmail.com' // Your email
       },
-      '7VqZ3bFJV16zV1KhD' // Replace with your EmailJS Public Key
+      import.meta.env.VITE_EMAILJS_PUBLIC_KEY // Replace with your EmailJS Public Key
     )
     .then(() => {
       setIsSubmitted(true);
@@ -93,7 +97,7 @@ const Contact = ({ darkMode }) => {
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
               {/* First Name */}
-              <input
+              <Input
                 type="text"
                 placeholder="First Name"
                 style={{
@@ -101,14 +105,14 @@ const Contact = ({ darkMode }) => {
                   borderColor: darkMode ? '#4b5563' : '#d1d5db',
                   color: darkMode ? 'white' : '#1f2937',
                 }}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
+                className="w-full h-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
                 required
                 value={formData.firstName}
                 onChange={(e) => setFormData({...formData, firstName: e.target.value})}
               />
 
               {/* Last Name */}
-              <input
+              <Input
                 type="text"
                 placeholder="Last Name"
                 style={{
@@ -116,7 +120,7 @@ const Contact = ({ darkMode }) => {
                   borderColor: darkMode ? '#4b5563' : '#d1d5db',
                   color: darkMode ? 'white' : '#1f2937',
                 }}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
+                className="w-full h-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
                 required
                 value={formData.lastName}
                 onChange={(e) => setFormData({...formData, lastName: e.target.value})}
@@ -124,7 +128,7 @@ const Contact = ({ darkMode }) => {
             </div>
 
             {/* Email */}
-            <input
+            <Input
               type="email"
               placeholder="Email Address"
               style={{
@@ -139,7 +143,7 @@ const Contact = ({ darkMode }) => {
             />
 
             {/* Phone */}
-            <input
+            <Input
               type="tel"
               placeholder="Phone Number"
               style={{
@@ -154,7 +158,7 @@ const Contact = ({ darkMode }) => {
             />
 
             {/* Message */}
-            <textarea
+            <Textarea
               rows="4"
               placeholder="Your Message"
               style={{
