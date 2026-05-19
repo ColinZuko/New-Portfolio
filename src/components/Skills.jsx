@@ -3,7 +3,7 @@ import HTML from '../assets/HTML.png'
 import CSS from '../assets/css.png'
 import react from '../assets/react.png'
 import tailwind from '../assets/tailwind.png'
-import PHP from '../assets/php.SVG'
+import PHP from '../assets/php.svg'
 import photoshop from '../assets/photoshop.png'
 import indesign from '../assets/indesign.png'
 
