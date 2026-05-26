@@ -38,7 +38,7 @@ const Projects = ({ darkMode }) => {
       title: 'Camping website',
       desc: 'Rebuilt the campaing website of my parents as part of my personal portfolio module.',
       image: project4,
-      tags: ['HTML', 'CSS', 'JavaScript', 'Publishing'],
+      tags: ['HTML', 'CSS', 'JavaScript', 'Publishing','Wordpress', 'SEO'],
       demoLink: 'https://www.campingkoordes.nl',
     },
     {
