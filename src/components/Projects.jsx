@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ArrowUpRight, X } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
-import project1 from "../assets/project-1.png";
+import project1 from "../assets/pickleandpan.png";
 import project2 from "../assets/parentproject.png";
 import project3 from "../assets/fixxar.png";
 import project4 from "../assets/camping.png";
@@ -11,7 +11,10 @@ import project6 from "../assets/powerpeak.png";
 const Tags = ({ tags }) => (
   <ul className="flex flex-wrap gap-1.5">
     {tags.map((tag) => (
-      <li key={tag} className="rounded-full bg-secondary px-2.5 py-1 text-xs text-secondary-foreground">
+      <li
+        key={tag}
+        className="rounded-full bg-secondary px-2.5 py-1 text-xs text-secondary-foreground"
+      >
         {tag}
       </li>
     ))}
@@ -25,13 +28,14 @@ const Projects = () => {
   const projects = [
     {
       id: 1,
-      title: "Food Blog",
-      desc: "MERN project where I learned the basics and applied it to make a food blog",
+      title: "Pickle & Pan",
+      desc: "Started out as a MERN stack practice project, but turned into a personal food blog to share my passion for cooking.",
       process:
-        "Developed through clear backend, UX, and deployment phases. Built secure Node.js/Express APIs with Bcrypt encryption, implemented AWS S3 cloud storage for 15MB image uploads, and established relational MongoDB querying. Redesigned the entire UI using TailwindCSS—taking structural inspiration from Pinch of Yum—and incorporated a mobile-responsive ShadCN carousel alongside a custom form live-preview component before hosting the final application on Vercel and Render.",
+        "Developed through clear backend, UX, and deployment phases. Built secure Node.js/Express APIs with Bcrypt encryption, implemented AWS S3 cloud storage for 15MB image uploads, and established relational MongoDB querying. Redesigned the entire UI using TailwindCSS—taking structural inspiration from Pinch of Yum—and incorporated a mobile-responsive ShadCN carousel alongside a custom form live-preview component before hosting the final application on Vercel and Render. After the project ended, I continued working on it in my free time, redesigning the website with the help of Claude to turn it into a more secure, fully fledged food blog.",
       image: project1,
       tags: ["React", "Node.js", "MongoDB", "Express.js"],
       demoLink: "https://github.com/ColinZuko/Mern-Practice",
+      siteLink: "https://pickleandpan.com",
     },
     {
       id: 2,
@@ -46,14 +50,15 @@ const Projects = () => {
     },
     {
       id: 3,
-      title: "Fixxar advertisement",
-      desc: "Designing and coming up with advertising materials for Fixxar Haaksbergen and in store posters.",
+      title: "Fixxar advertisement and internship",
+      desc: "Redesigning Fixxar website in WordPress and creating marketing material for fixxar",
       process:
-        "Collaborated with the store managers to align with corporate branding rules. Focused on typography hierarchy and color contrast to maximize visual impact for physical foot traffic.",
+        "Collaborated with the store managers to align with corporate branding rules. Focused on typography hierarchy and color contrast to maximize visual impact for physical foot traffic. During my internship, I expanded into social media marketing: I set up and professionalized the store’s social media channels and redesigned its website in WordPress.",
       image: project3,
       tags: ["InDesign", "Photoshop"],
       demoLink:
         "https://www.canva.com/design/DAHDxgYSq1Q/-IN0IRVCpUXbzh7xwhOELQ/edit?utm_content=DAHDxgYSq1Q&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton",
+      siteLink: "https://www.fixxar.nl",
     },
     {
       id: 4,
@@ -105,12 +110,20 @@ const Projects = () => {
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="mb-12 text-center" data-aos="fade-up">
           <h2 className="mb-3 text-4xl font-semibold sm:text-5xl">Projects</h2>
-          <p className="text-lg text-muted-foreground">A showcase of my recent work</p>
+          <p className="text-lg text-muted-foreground">
+            A showcase of my recent work
+          </p>
         </div>
 
-        <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3" data-aos="fade-up">
+        <ul
+          className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
+          data-aos="fade-up"
+        >
           {projects.map((project) => (
-            <li key={project.id} className="flex flex-col overflow-hidden rounded-2xl bg-background">
+            <li
+              key={project.id}
+              className="flex flex-col overflow-hidden rounded-2xl bg-background"
+            >
               <button
                 type="button"
                 onClick={() => setSelectedProject(project)}
@@ -124,21 +137,37 @@ const Projects = () => {
                   />
                 </div>
                 <div className="flex flex-1 flex-col p-5">
-                  <h3 className="mb-1 text-lg font-semibold">{project.title}</h3>
-                  <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">{project.desc}</p>
+                  <h3 className="mb-1 text-lg font-semibold">
+                    {project.title}
+                  </h3>
+                  <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
+                    {project.desc}
+                  </p>
                   <div className="mt-auto">
                     <Tags tags={project.tags} />
                   </div>
                 </div>
               </button>
-              <a
-                href={project.demoLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mx-5 mb-5 inline-flex items-center gap-1 self-start py-2 text-sm font-medium text-primary hover:underline"
-              >
-                View demo <ArrowUpRight className="size-4" aria-hidden="true" />
-              </a>
+              <div className="mx-5 mb-5 flex gap-5">
+                <a
+                  href={project.demoLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 py-2 text-sm font-medium text-primary hover:underline"
+                >
+                  View demo <ArrowUpRight className="size-4" aria-hidden="true" />
+                </a>
+                {project.siteLink && (
+                  <a
+                    href={project.siteLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 py-2 text-sm font-medium text-primary hover:underline"
+                  >
+                    Visit website <ArrowUpRight className="size-4" aria-hidden="true" />
+                  </a>
+                )}
+              </div>
             </li>
           ))}
         </ul>
@@ -180,11 +209,18 @@ const Projects = () => {
             </button>
 
             <div className="overflow-y-auto">
-              <img src={selectedProject.image} alt="" className="aspect-video w-full object-cover" />
+              <img
+                src={selectedProject.image}
+                alt=""
+                className="aspect-video w-full object-cover"
+              />
 
               <div className="space-y-5 p-6 sm:p-8">
                 <div>
-                  <h3 id="project-dialog-title" className="mb-3 text-2xl font-semibold">
+                  <h3
+                    id="project-dialog-title"
+                    className="mb-3 text-2xl font-semibold"
+                  >
                     {selectedProject.title}
                   </h3>
                   <Tags tags={selectedProject.tags} />
@@ -192,12 +228,16 @@ const Projects = () => {
 
                 <div>
                   <h4 className="mb-1 text-sm font-semibold">Overview</h4>
-                  <p className="leading-relaxed text-muted-foreground">{selectedProject.desc}</p>
+                  <p className="leading-relaxed text-muted-foreground">
+                    {selectedProject.desc}
+                  </p>
                 </div>
 
                 <div>
                   <h4 className="mb-1 text-sm font-semibold">The Process</h4>
-                  <p className="leading-relaxed text-muted-foreground">{selectedProject.process}</p>
+                  <p className="leading-relaxed text-muted-foreground">
+                    {selectedProject.process}
+                  </p>
                 </div>
 
                 <a
@@ -206,8 +246,20 @@ const Projects = () => {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-85"
                 >
-                  View Project Demo <ArrowUpRight className="size-4" aria-hidden="true" />
+                  View Project Demo{" "}
+                  <ArrowUpRight className="size-4" aria-hidden="true" />
                 </a>
+                {selectedProject.siteLink && (
+                  <a
+                    href={selectedProject.siteLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-3 inline-flex items-center gap-1 rounded-full bg-secondary px-5 py-2.5 text-sm font-medium text-secondary-foreground transition-opacity hover:opacity-85"
+                  >
+                    Visit Website{" "}
+                    <ArrowUpRight className="size-4" aria-hidden="true" />
+                  </a>
+                )}
               </div>
             </div>
           </div>

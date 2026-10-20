@@ -1,15 +1,15 @@
-import { Menu, X } from "lucide-react"
-import { useState } from "react"
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
 
 const navItems = [
-  { name: 'About', link: '#about' },
-  { name: 'Skills', link: '#skills' },
-  { name: 'Projects', link: '#projects' },
-  { name: 'Contact', link: '#contact' },
-]
+  { name: "About", link: "#about" },
+  { name: "Skills", link: "#skills" },
+  { name: "Projects", link: "#projects" },
+  { name: "Contact", link: "#contact" },
+];
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <header className="fixed top-0 inset-x-0 z-40 border-b border-border/60 bg-background/75 backdrop-blur-xl backdrop-saturate-150">
@@ -39,7 +39,7 @@ const Navbar = () => {
         <button
           type="button"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           aria-expanded={isMenuOpen}
           className="md:hidden -mr-2 flex size-11 items-center justify-center rounded-full hover:bg-secondary"
         >
@@ -64,12 +64,12 @@ const Navbar = () => {
             onClick={() => setIsMenuOpen(false)}
             className="mt-4 block rounded-full bg-primary py-3 text-center font-medium text-primary-foreground"
           >
-            Hire Me
+            Message Me
           </a>
         </div>
       )}
     </header>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
