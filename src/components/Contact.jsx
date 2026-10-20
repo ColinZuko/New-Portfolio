@@ -4,8 +4,14 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 
+const fields = [
+  { name: 'firstName', label: 'First Name', type: 'text', autoComplete: 'given-name' },
+  { name: 'lastName', label: 'Last Name', type: 'text', autoComplete: 'family-name' },
+  { name: 'email', label: 'Email Address', type: 'email', autoComplete: 'email' },
+  { name: 'phone', label: 'Phone Number', type: 'tel', autoComplete: 'tel' },
+]
 
-const Contact = ({ darkMode }) => {
+const Contact = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -13,179 +19,90 @@ const Contact = ({ darkMode }) => {
     phone: '',
     message: ''
   });
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [status, setStatus] = useState('idle'); // idle | sending | sent | error
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setStatus('sending');
     emailjs.send(
-      import.meta.env.VITE_EMAILJS_SERVICE, 
-    import.meta.env.VITE_EMAILJS_TEMPLATE, // Replace with your EmailJS Template ID
+      import.meta.env.VITE_EMAILJS_SERVICE,
+      import.meta.env.VITE_EMAILJS_TEMPLATE,
       {
         from_name: `${formData.firstName} ${formData.lastName}`,
         from_email: formData.email,
         phone: formData.phone,
         message: formData.message,
-        to_email: 'Colin.delsink@gmail.com' // Your email
+        to_email: 'Colin.delsink@gmail.com'
       },
-      import.meta.env.VITE_EMAILJS_PUBLIC_KEY // Replace with your EmailJS Public Key
+      import.meta.env.VITE_EMAILJS_PUBLIC_KEY
     )
     .then(() => {
-      setIsSubmitted(true);
+      setStatus('sent');
       setFormData({ firstName: '', lastName: '', email: '', phone: '', message: '' }); // Reset form
     })
     .catch((error) => {
       console.error('Email send failed:', error);
-      alert('Hmmm something went wrong. Please try again.');
+      setStatus('error'); // form keeps its contents so nothing is lost
     });
   };
 
+  const update = (name) => (e) => setFormData({ ...formData, [name]: e.target.value });
+  const inputClass = 'h-11 rounded-xl bg-background px-4 text-base md:text-base';
+
   return (
-    <section
-      id="contact"
-      style={{
-        backgroundColor: darkMode ? '#111827' : '#f9fafb',
-      }}
-      className="py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden"
-    >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Heading */}
-        <div
-          className="text-center mb-8 sm:mb-10 md:mb-12"
-          data-aos="fade-up"
-        >
-          <h2
-            className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3"
-            style={{
-              color: darkMode ? 'white' : '#1f2937',
-            }}
-          >
-            Get In{' '}
-            <span
-              style={{
-                background: 'linear-gradient(to right, #228B22, #22c55e)',
-                WebkitBackgroundClip: 'text',
-                backgroundClip: 'text',
-                color: 'transparent',
-              }}
-            >
-              Touch
-            </span>
-          </h2>
-
-          <p
-            className="text-base sm:text-lg md:text-xl"
-            style={{
-              color: darkMode ? '#d1d5db' : '#6b7280',
-            }}
-          >
-            Let's talk
-          </p>
+    <section id="contact" className="py-20 sm:py-28">
+      <div className="mx-auto max-w-xl px-4 sm:px-6">
+        <div className="mb-10 text-center" data-aos="fade-up">
+          <h2 className="mb-3 text-4xl font-semibold sm:text-5xl">Get In Touch</h2>
+          <p className="text-lg text-muted-foreground">Let's talk</p>
         </div>
 
-        <div className="flex justify-center">
-          {/* Form */}
-          <form
-            style={{
-              background: darkMode
-                ? 'linear-gradient(to right, #1f2937, #111827)'
-                : 'linear-gradient(to right, #ffffff, #f9fafb)',
-              borderColor: darkMode ? '#374151' : '#e5e7eb',
-            }}
-            className="rounded-xl p-4 sm:p-5 md:p-6 lg:p-8 border shadow-lg max-w-2xl w-full"
-            data-aos="fade-left"
-            onSubmit={handleSubmit}
+        <form onSubmit={handleSubmit} className="rounded-3xl bg-card p-6 sm:p-8" data-aos="fade-up">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {fields.map((field) => (
+              <label
+                key={field.name}
+                className={`block text-sm font-medium ${field.type === 'text' ? '' : 'sm:col-span-2'}`}
+              >
+                {field.label}
+                <Input
+                  type={field.type}
+                  autoComplete={field.autoComplete}
+                  className={`mt-1.5 ${inputClass}`}
+                  required
+                  value={formData[field.name]}
+                  onChange={update(field.name)}
+                />
+              </label>
+            ))}
+
+            <label className="block text-sm font-medium sm:col-span-2">
+              Message
+              <Textarea
+                rows="5"
+                className="mt-1.5 rounded-xl bg-background px-4 py-3 text-base md:text-base resize-none"
+                required
+                value={formData.message}
+                onChange={update('message')}
+              />
+            </label>
+          </div>
+
+          <Button
+            type="submit"
+            disabled={status === 'sending'}
+            className="mt-6 h-12 w-full rounded-full text-base"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
-              {/* First Name */}
-              <Input
-                type="text"
-                placeholder="First Name"
-                style={{
-                  backgroundColor: darkMode ? '#374151' : '#faede3',
-                  borderColor: darkMode ? '#4b5563' : '#d1d5db',
-                  color: darkMode ? 'white' : '#1f2937',
-                }}
-                className="w-full h-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
-                required
-                value={formData.firstName}
-                onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-              />
+            {status === 'sending' ? 'Sending…' : 'Send Message'}
+          </Button>
 
-              {/* Last Name */}
-              <Input
-                type="text"
-                placeholder="Last Name"
-                style={{
-                  backgroundColor: darkMode ? '#374151' : '#faede3',
-                  borderColor: darkMode ? '#4b5563' : '#d1d5db',
-                  color: darkMode ? 'white' : '#1f2937',
-                }}
-                className="w-full h-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
-                required
-                value={formData.lastName}
-                onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-              />
-            </div>
-
-            {/* Email */}
-            <Input
-              type="email"
-              placeholder="Email Address"
-              style={{
-                backgroundColor: darkMode ? '#374151' : '#faede3',
-                borderColor: darkMode ? '#4b5563' : '#d1d5db',
-                color: darkMode ? 'white' : '#1f2937',
-              }}
-              className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all mb-3 sm:mb-4"
-              required
-              value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-            />
-
-            {/* Phone */}
-            <Input
-              type="tel"
-              placeholder="Phone Number"
-              style={{
-                backgroundColor: darkMode ? '#374151' : '#faede3',
-                borderColor: darkMode ? '#4b5563' : '#d1d5db',
-                color: darkMode ? 'white' : '#1f2937',
-              }}
-              className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all mb-3 sm:mb-4"
-              required
-              value={formData.phone}
-              onChange={(e) => setFormData({...formData, phone: e.target.value})}
-            />
-
-            {/* Message */}
-            <Textarea
-              rows="4"
-              placeholder="Your Message"
-              style={{
-                backgroundColor: darkMode ? '#374151' : '#faede3',
-                borderColor: darkMode ? '#4b5563' : '#d1d5db',
-                color: darkMode ? 'white' : '#1f2937',
-              }}
-              className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all mb-4 sm:mb-6 resize-none"
-              required
-              value={formData.message}
-              onChange={(e) => setFormData({...formData, message: e.target.value})}
-            />
-
-            <button
-              type="submit"
-              style={{
-                background: 'linear-gradient(to right, #228B22, #22c55e)',
-              }}
-              className="w-full py-2 sm:py-3 text-white font-semibold rounded-lg text-sm sm:text-base hover:shadow-lg hover:shadow-green-500/25 hover:scale-[1.02] transition-all"
-            >
-              Send Message
-            </button>
-            {isSubmitted && (
-              <p className="mt-4 text-green-500 text-center">Your message was received successfully, I'll get back to you soon!</p>
+          <p role="status" className="mt-4 text-center text-sm empty:hidden">
+            {status === 'sent' && "Message sent. I'll get back to you soon!"}
+            {status === 'error' && (
+              <span className="text-destructive">Your message couldn't be sent. Check your connection and try again.</span>
             )}
-          </form>
-        </div>
+          </p>
+        </form>
       </div>
     </section>
   )

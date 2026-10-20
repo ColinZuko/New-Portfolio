@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { FaExternalLinkAlt, FaGithub, FaTimes } from "react-icons/fa";
+import { ArrowUpRight, X } from "lucide-react";
+import { FaGithub } from "react-icons/fa";
 import project1 from "../assets/project-1.png";
 import project2 from "../assets/parentproject.png";
 import project3 from "../assets/fixxar.png";
@@ -7,7 +8,17 @@ import project4 from "../assets/camping.png";
 import project5 from "../assets/fortune.png";
 import project6 from "../assets/powerpeak.png";
 
-const Projects = ({ darkMode }) => {
+const Tags = ({ tags }) => (
+  <ul className="flex flex-wrap gap-1.5">
+    {tags.map((tag) => (
+      <li key={tag} className="rounded-full bg-secondary px-2.5 py-1 text-xs text-secondary-foreground">
+        {tag}
+      </li>
+    ))}
+  </ul>
+);
+
+const Projects = () => {
   // State to manage the open modal project
   const [selectedProject, setSelectedProject] = useState(null);
 
@@ -77,141 +88,70 @@ const Projects = ({ darkMode }) => {
     },
   ];
 
-  // Block scrolling on the body when a project is opened
+  // Block scrolling on the body and close on Escape while a project is open
   useEffect(() => {
-    if (selectedProject) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    if (!selectedProject) return;
+    document.body.style.overflow = "hidden";
+    const onKey = (e) => e.key === "Escape" && setSelectedProject(null);
+    window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = "unset";
+      window.removeEventListener("keydown", onKey);
     };
   }, [selectedProject]);
 
   return (
-    <section
-      id="projects"
-      style={{ backgroundColor: darkMode ? "#111827" : "#f9fafb" }}
-      className="relative py-24"
-    >
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-10" data-aos="fade-up">
-          <h2
-            className="text-3xl sm:text-4xl font-bold mb-3"
-            style={{ color: darkMode ? "white" : "#1f2937" }}
-          >
-            My{" "}
-            <span
-              style={{
-                background: "linear-gradient(to right, #228B22, #22c55e)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                color: "transparent",
-              }}
-            >
-              Projects
-            </span>
-          </h2>
-
-          <p
-            className="max-w-xl mx-auto"
-            style={{ color: darkMode ? "#d1d5db" : "#6b7280" }}
-          >
-            A showcase of my recent work
-          </p>
+    <section id="projects" className="bg-card py-20 sm:py-28">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="mb-12 text-center" data-aos="fade-up">
+          <h2 className="mb-3 text-4xl font-semibold sm:text-5xl">Projects</h2>
+          <p className="text-lg text-muted-foreground">A showcase of my recent work</p>
         </div>
 
-        {/* Project Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
-          {projects.map((project, index) => (
-            <div
-              key={project.id}
-              onClick={() => setSelectedProject(project)}
-              style={{
-                background: darkMode
-                  ? "linear-gradient(to right, #1f2937, #111827)"
-                  : "linear-gradient(to right, #ffffff, #f9fafb)",
-                borderColor: darkMode ? "#374151" : "#e5e7eb", // Fixed missing #
-              }}
-              className="group rounded-xl border hover:border-green-500/50 transition-all duration-300 cursor-pointer"
-              data-aos="fade-up"
-              data-aos-delay={index * 100}
-            >
-              <div className="h-36 overflow-hidden rounded-t-xl">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-              </div>
-
-              <div className="p-4">
-                <h3
-                  className="text-lg font-bold mb-2"
-                  style={{ color: darkMode ? "white" : "#1f2937" }}
-                >
-                  {project.title}
-                </h3>
-
-                <p
-                  className="text-sm mb-3 line-clamp-2"
-                  style={{ color: darkMode ? "#d1d5db" : "#6b7280" }}
-                >
-                  {project.desc}
-                </p>
-
-                <div className="flex flex-wrap gap-1.5 mb-4">
-                  {project.tags.map((tag, idx) => (
-                    <span
-                      key={idx}
-                      style={{
-                        backgroundColor: darkMode ? "#374151" : "#f3f4f6",
-                        color: darkMode ? "#d1d5db" : "#4b5563",
-                      }}
-                      className="px-2 py-1 text-xs rounded-full"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+        <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3" data-aos="fade-up">
+          {projects.map((project) => (
+            <li key={project.id} className="flex flex-col overflow-hidden rounded-2xl bg-background">
+              <button
+                type="button"
+                onClick={() => setSelectedProject(project)}
+                className="group flex flex-1 flex-col text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+              >
+                <div className="aspect-video w-full overflow-hidden">
+                  <img
+                    src={project.image}
+                    alt=""
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transition-none"
+                  />
                 </div>
-
-                <div
-                  className="flex gap-2"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <a
-                    href={project.demoLink}
-                    target={project.demoLink !== "#" ? "_blank" : "_self"}
-                    rel={project.demoLink !== "#" ? "noopener noreferrer" : ""}
-                    style={{
-                      background: "linear-gradient(to right, #228B22, #22c55e)",
-                    }}
-                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-white text-sm rounded-lg hover:shadow-lg hover:shadow-green-500/25 transition-all"
-                  >
-                    <FaExternalLinkAlt className="text-sm" />
-                    <span>Demo</span>
-                  </a>
+                <div className="flex flex-1 flex-col p-5">
+                  <h3 className="mb-1 text-lg font-semibold">{project.title}</h3>
+                  <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">{project.desc}</p>
+                  <div className="mt-auto">
+                    <Tags tags={project.tags} />
+                  </div>
                 </div>
-              </div>
-            </div>
+              </button>
+              <a
+                href={project.demoLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mx-5 mb-5 inline-flex items-center gap-1 self-start py-2 text-sm font-medium text-primary hover:underline"
+              >
+                View demo <ArrowUpRight className="size-4" aria-hidden="true" />
+              </a>
+            </li>
           ))}
-        </div>
+        </ul>
 
-        {/* GitHub Footer Link */}
-        <div className="text-center mt-10">
+        <div className="mt-12 text-center">
           <a
             href="https://github.com/ColinZuko?tab=repositories"
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              background: "linear-gradient(to right, #228B22, #22c55e)",
-            }}
-            className="inline-flex items-center gap-2 px-7 py-4 text-white text-sm font-semibold rounded-full hover:shadow-lg hover:shadow-green-500/25 transition-all"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-medium text-primary-foreground transition-opacity hover:opacity-85"
           >
-            <FaGithub />
-            <span>View All Projects</span>
-            <FaExternalLinkAlt className="text-sm" />
+            <FaGithub aria-hidden="true" />
+            View All Projects on GitHub
           </a>
         </div>
       </div>
@@ -219,101 +159,54 @@ const Projects = ({ darkMode }) => {
       {/* Overlay Modal */}
       {selectedProject && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
           onClick={() => setSelectedProject(null)}
         >
           <div
-            style={{
-              backgroundColor: darkMode ? "#1f2937" : "#ffffff",
-              borderColor: darkMode ? "#374151" : "#e5e7eb",
-            }}
-            className="relative w-full max-w-2xl rounded-2xl border overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="project-dialog-title"
+            className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-popover shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
             <button
+              type="button"
+              autoFocus
               onClick={() => setSelectedProject(null)}
-              style={{ color: darkMode ? "#9ca3af" : "#4b5563" }}
-              className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-gray-500/10 transition-colors"
+              aria-label="Close"
+              className="absolute right-4 top-4 z-10 flex size-9 items-center justify-center rounded-full bg-background/80 backdrop-blur hover:bg-secondary"
             >
-              <FaTimes className="text-lg" />
+              <X className="size-5" />
             </button>
 
-            {/* Modal Content Wrapper (Scrollable if content overflows) */}
-            <div className="overflow-y-auto p-8 pt-14 space-y-4">
-              <div className="h-60 w-full overflow-hidden rounded-xl">
-                <img
-                  src={selectedProject.image}
-                  alt={selectedProject.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+            <div className="overflow-y-auto">
+              <img src={selectedProject.image} alt="" className="aspect-video w-full object-cover" />
 
-              <div>
-                <h3
-                  className="text-2xl font-bold mb-2"
-                  style={{ color: darkMode ? "white" : "#1f2937" }}
-                >
-                  {selectedProject.title}
-                </h3>
-
-                <div className="flex flex-wrap gap-1.5 mb-4">
-                  {selectedProject.tags.map((tag, idx) => (
-                    <span
-                      key={idx}
-                      style={{
-                        backgroundColor: darkMode ? "#374151" : "#f3f4f6",
-                        color: darkMode ? "#d1d5db" : "#4b5563",
-                      }}
-                      className="px-2.5 py-1 text-xs font-medium rounded-full"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+              <div className="space-y-5 p-6 sm:p-8">
+                <div>
+                  <h3 id="project-dialog-title" className="mb-3 text-2xl font-semibold">
+                    {selectedProject.title}
+                  </h3>
+                  <Tags tags={selectedProject.tags} />
                 </div>
 
-                <hr
-                  style={{ borderColor: darkMode ? "#374151" : "#e5e7eb" }}
-                  className="my-4"
-                />
+                <div>
+                  <h4 className="mb-1 text-sm font-semibold">Overview</h4>
+                  <p className="leading-relaxed text-muted-foreground">{selectedProject.desc}</p>
+                </div>
 
-                <h4 className="text-sm font-semibold uppercase tracking-wider mb-1 text-green-500">
-                  Overview
-                </h4>
-                <p
-                  className="text-sm mb-4 leading-relaxed"
-                  style={{ color: darkMode ? "#d1d5db" : "#4b5563" }}
-                >
-                  {selectedProject.desc}
-                </p>
+                <div>
+                  <h4 className="mb-1 text-sm font-semibold">The Process</h4>
+                  <p className="leading-relaxed text-muted-foreground">{selectedProject.process}</p>
+                </div>
 
-                <h4 className="text-sm font-semibold uppercase tracking-wider mb-1 text-green-500">
-                  The Process
-                </h4>
-                <p
-                  className="text-sm leading-relaxed"
-                  style={{ color: darkMode ? "#d1d5db" : "#4b5563" }}
-                >
-                  {selectedProject.process}
-                </p>
-              </div>
-
-              <div className="pt-2">
                 <a
                   href={selectedProject.demoLink}
-                  target={selectedProject.demoLink !== "#" ? "_blank" : "_self"}
-                  rel={
-                    selectedProject.demoLink !== "#"
-                      ? "noopener noreferrer"
-                      : ""
-                  }
-                  style={{
-                    background: "linear-gradient(to right, #228B22, #22c55e)",
-                  }}
-                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-green-500/25 transition-all"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-85"
                 >
-                  <FaExternalLinkAlt className="text-xs" />
-                  <span>View Project Demo</span>
+                  View Project Demo <ArrowUpRight className="size-4" aria-hidden="true" />
                 </a>
               </div>
             </div>
