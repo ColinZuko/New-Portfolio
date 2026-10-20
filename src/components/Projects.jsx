@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ArrowUpRight, X } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
-import project1 from "../assets/pickleandpan.png";
+import project1 from "../assets/PickleandPan.png";
 import project2 from "../assets/parentproject.png";
 import project3 from "../assets/fixxar.png";
 import project4 from "../assets/camping.png";
