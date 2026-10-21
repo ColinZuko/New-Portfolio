@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { motion, useScroll, useTransform, useSpring, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, X } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import project1 from "../assets/PickleandPan.png";
@@ -21,9 +22,82 @@ const Tags = ({ tags }) => (
   </ul>
 );
 
+const ProjectCard = ({ project, progress, reduce, onOpen }) => {
+  // image slides inside its frame against the track direction, card swings in 3D
+  const imgX = useTransform(progress, [0, 1], ["-12%", "12%"]);
+  const rotateY = useTransform(progress, [0, 1], [-18, 18]);
+  return (
+    <motion.li
+      style={reduce ? undefined : { rotateY }}
+      className={`flex flex-col overflow-hidden rounded-2xl bg-background shadow-2xl ${reduce ? "" : "w-[80vw] max-w-md shrink-0"}`}
+    >
+      <button
+        type="button"
+        onClick={onOpen}
+        className="group flex flex-1 flex-col text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+      >
+        <div className="aspect-video w-full overflow-hidden">
+          <motion.img
+            src={project.image}
+            alt=""
+            style={reduce ? undefined : { x: imgX, scale: 1.3 }}
+            className="h-full w-full object-cover"
+          />
+        </div>
+        <div className="flex flex-1 flex-col p-5">
+          <h3 className="mb-1 text-lg font-semibold">{project.title}</h3>
+          <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">{project.desc}</p>
+          <div className="mt-auto">
+            <Tags tags={project.tags} />
+          </div>
+        </div>
+      </button>
+      <div className="mx-5 mb-5 flex gap-5">
+        <a
+          href={project.demoLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 py-2 text-sm font-medium text-primary hover:underline"
+        >
+          View demo <ArrowUpRight className="size-4" aria-hidden="true" />
+        </a>
+        {project.siteLink && (
+          <a
+            href={project.siteLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 py-2 text-sm font-medium text-primary hover:underline"
+          >
+            Visit website <ArrowUpRight className="size-4" aria-hidden="true" />
+          </a>
+        )}
+      </div>
+    </motion.li>
+  );
+};
+
 const Projects = () => {
   // State to manage the open modal project
   const [selectedProject, setSelectedProject] = useState(null);
+
+  const reduce = useReducedMotion();
+  const sectionRef = useRef(null);
+  const trackRef = useRef(null);
+  const [distance, setDistance] = useState(0);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
+  const p = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.4 });
+  const x = useTransform(p, (v) => -v * distance);
+  const bgX = useTransform(p, [0, 1], ["10%", "-70%"]);
+  const headY = useTransform(p, [0, 1], [0, -60]);
+
+  // how far the track must slide so its last card ends up on screen
+  useEffect(() => {
+    if (reduce) return;
+    const measure = () => setDistance(trackRef.current.scrollWidth - window.innerWidth);
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [reduce]);
 
   const projects = [
     {
@@ -105,85 +179,56 @@ const Projects = () => {
     };
   }, [selectedProject]);
 
+  const card = (project) => (
+    <ProjectCard key={project.id} project={project} progress={p} reduce={reduce} onOpen={() => setSelectedProject(project)} />
+  );
+  const githubLink = (
+    <a
+      href="https://github.com/ColinZuko?tab=repositories"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-medium text-primary-foreground transition-opacity hover:opacity-85"
+    >
+      <FaGithub aria-hidden="true" />
+      View All Projects on GitHub
+    </a>
+  );
+
   return (
-    <section id="projects" className="bg-card py-20 sm:py-28">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        <div className="mb-12 text-center" data-aos="fade-up">
-          <h2 className="mb-3 text-4xl font-semibold sm:text-5xl">Projects</h2>
-          <p className="text-lg text-muted-foreground">
-            A showcase of my recent work
-          </p>
+    <section
+      id="projects"
+      ref={sectionRef}
+      className="relative bg-card"
+      style={reduce ? undefined : { height: `${projects.length * 60 + 100}vh` }}
+    >
+      {reduce ? (
+        <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 sm:py-28">
+          <h2 className="mb-12 text-center text-4xl font-semibold sm:text-5xl">Projects</h2>
+          <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">{projects.map(card)}</ul>
+          <div className="mt-12 text-center">{githubLink}</div>
         </div>
-
-        <ul
-          className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
-          data-aos="fade-up"
-        >
-          {projects.map((project) => (
-            <li
-              key={project.id}
-              className="flex flex-col overflow-hidden rounded-2xl bg-background"
-            >
-              <button
-                type="button"
-                onClick={() => setSelectedProject(project)}
-                className="group flex flex-1 flex-col text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
-              >
-                <div className="aspect-video w-full overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt=""
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transition-none"
-                  />
-                </div>
-                <div className="flex flex-1 flex-col p-5">
-                  <h3 className="mb-1 text-lg font-semibold">
-                    {project.title}
-                  </h3>
-                  <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
-                    {project.desc}
-                  </p>
-                  <div className="mt-auto">
-                    <Tags tags={project.tags} />
-                  </div>
-                </div>
-              </button>
-              <div className="mx-5 mb-5 flex gap-5">
-                <a
-                  href={project.demoLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 py-2 text-sm font-medium text-primary hover:underline"
-                >
-                  View demo <ArrowUpRight className="size-4" aria-hidden="true" />
-                </a>
-                {project.siteLink && (
-                  <a
-                    href={project.siteLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 py-2 text-sm font-medium text-primary hover:underline"
-                  >
-                    Visit website <ArrowUpRight className="size-4" aria-hidden="true" />
-                  </a>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-
-        <div className="mt-12 text-center">
-          <a
-            href="https://github.com/ColinZuko?tab=repositories"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-medium text-primary-foreground transition-opacity hover:opacity-85"
+      ) : (
+        <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden [perspective:1000px]">
+          <motion.p
+            aria-hidden="true"
+            style={{ x: bgX }}
+            className="pointer-events-none absolute bottom-0 whitespace-nowrap text-[30vw] font-black leading-none tracking-tighter text-foreground/[0.04] select-none"
           >
-            <FaGithub aria-hidden="true" />
-            View All Projects on GitHub
-          </a>
+            SELECTED WORK
+          </motion.p>
+          <motion.div style={{ y: headY }} className="mb-10 px-4 text-center">
+            <h2 className="mb-3 text-4xl font-semibold sm:text-5xl">Projects</h2>
+            <p className="text-lg text-muted-foreground">A showcase of my recent work</p>
+          </motion.div>
+          <motion.ul ref={trackRef} style={{ x }} className="flex w-max items-center gap-8 px-[10vw]">
+            {projects.map(card)}
+            <li className="flex w-[80vw] max-w-sm shrink-0 justify-center">{githubLink}</li>
+          </motion.ul>
+          <div className="mx-auto mt-10 h-1 w-48 overflow-hidden rounded-full bg-secondary">
+            <motion.div style={{ scaleX: p }} className="h-full origin-left bg-primary" />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Overlay Modal */}
       {selectedProject && (

@@ -8,6 +8,7 @@ import Skills from "./components/Skills"
 import Projects from "./components/Projects"
 import Contact from "./components/Contact"
 import Footer from "./components/Footer"
+import Marquee from "./components/Marquee"
 
 const App = () => {
   useEffect(() => {
@@ -24,9 +25,11 @@ const App = () => {
       <Navbar />
       <main>
         <Hero />
+        <Marquee />
         <About />
         <Skills />
         <Projects />
+        <Marquee />
         <Contact />
       </main>
       <Footer />
