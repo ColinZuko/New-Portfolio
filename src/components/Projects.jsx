@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, useScroll, useTransform, useSpring, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  useReducedMotion,
+} from "framer-motion";
 import { ArrowUpRight, X } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import project1 from "../assets/PickleandPan.png";
@@ -8,6 +14,7 @@ import project3 from "../assets/fixxar.png";
 import project4 from "../assets/camping.png";
 import project5 from "../assets/fortune.png";
 import project6 from "../assets/powerpeak.png";
+import project7 from "../assets/voorraadzoeker.webp";
 
 const Tags = ({ tags }) => (
   <ul className="flex flex-wrap gap-1.5">
@@ -46,7 +53,9 @@ const ProjectCard = ({ project, progress, reduce, onOpen }) => {
         </div>
         <div className="flex flex-1 flex-col p-5">
           <h3 className="mb-1 text-lg font-semibold">{project.title}</h3>
-          <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">{project.desc}</p>
+          <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
+            {project.desc}
+          </p>
           <div className="mt-auto">
             <Tags tags={project.tags} />
           </div>
@@ -84,8 +93,15 @@ const Projects = () => {
   const sectionRef = useRef(null);
   const trackRef = useRef(null);
   const [distance, setDistance] = useState(0);
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
-  const p = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.4 });
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+  const p = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 30,
+    mass: 0.4,
+  });
   const x = useTransform(p, (v) => -v * distance);
   const bgX = useTransform(p, [0, 1], ["10%", "-70%"]);
   const headY = useTransform(p, [0, 1], [0, -60]);
@@ -93,7 +109,8 @@ const Projects = () => {
   // how far the track must slide so its last card ends up on screen
   useEffect(() => {
     if (reduce) return;
-    const measure = () => setDistance(trackRef.current.scrollWidth - window.innerWidth);
+    const measure = () =>
+      setDistance(trackRef.current.scrollWidth - window.innerWidth);
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
@@ -110,6 +127,24 @@ const Projects = () => {
       tags: ["React", "Node.js", "MongoDB", "Express.js"],
       demoLink: "https://github.com/ColinZuko/Mern-Practice",
       siteLink: "https://pickleandpan.com",
+    },
+    {
+      id: 7,
+      title: "Stock Finder for FixJeFilament",
+      desc: "A mobile tool I built during my internship so store staff can check stock in seconds, by typing a few letters or scanning a barcode.",
+      process:
+        "Staff had to search the customer website to find out if more filament was in the back. I built a Python/Flask backend on the WooCommerce REST API and a lightweight mobile page with live search, a barcode scanner (EAN and Code 128, on Android and iPhone) and a pick list for restocking. I measured and fixed performance step by step: from 2.3 s per search to about 1.5 ms by caching all products in memory. Along the way I debugged a production-only bug where Gunicorn's forked worker never received the cache thread. The project has pytest tests running on every push via GitHub Actions, and a public demo with fake data.",
+      image: project7,
+      tags: [
+        "Python",
+        "Flask",
+        "JavaScript",
+        "REST API",
+        "pytest",
+        "GitHub Actions",
+      ],
+      demoLink: "https://colinzuko.github.io/Voorraad-zoeker/",
+      siteLink: "https://github.com/ColinZuko/Voorraad-zoeker",
     },
     {
       id: 2,
@@ -180,7 +215,13 @@ const Projects = () => {
   }, [selectedProject]);
 
   const card = (project) => (
-    <ProjectCard key={project.id} project={project} progress={p} reduce={reduce} onOpen={() => setSelectedProject(project)} />
+    <ProjectCard
+      key={project.id}
+      project={project}
+      progress={p}
+      reduce={reduce}
+      onOpen={() => setSelectedProject(project)}
+    />
   );
   const githubLink = (
     <a
@@ -203,8 +244,12 @@ const Projects = () => {
     >
       {reduce ? (
         <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 sm:py-28">
-          <h2 className="mb-12 text-center text-4xl font-semibold sm:text-5xl">Projects</h2>
-          <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">{projects.map(card)}</ul>
+          <h2 className="mb-12 text-center text-4xl font-semibold sm:text-5xl">
+            Projects
+          </h2>
+          <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {projects.map(card)}
+          </ul>
           <div className="mt-12 text-center">{githubLink}</div>
         </div>
       ) : (
@@ -217,15 +262,28 @@ const Projects = () => {
             SELECTED WORK
           </motion.p>
           <motion.div style={{ y: headY }} className="mb-10 px-4 text-center">
-            <h2 className="mb-3 text-4xl font-semibold sm:text-5xl">Projects</h2>
-            <p className="text-lg text-muted-foreground">A showcase of my recent work</p>
+            <h2 className="mb-3 text-4xl font-semibold sm:text-5xl">
+              Projects
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              A showcase of my recent work
+            </p>
           </motion.div>
-          <motion.ul ref={trackRef} style={{ x }} className="flex w-max items-center gap-8 px-[10vw]">
+          <motion.ul
+            ref={trackRef}
+            style={{ x }}
+            className="flex w-max items-center gap-8 px-[10vw]"
+          >
             {projects.map(card)}
-            <li className="flex w-[80vw] max-w-sm shrink-0 justify-center">{githubLink}</li>
+            <li className="flex w-[80vw] max-w-sm shrink-0 justify-center">
+              {githubLink}
+            </li>
           </motion.ul>
           <div className="mx-auto mt-10 h-1 w-48 overflow-hidden rounded-full bg-secondary">
-            <motion.div style={{ scaleX: p }} className="h-full origin-left bg-primary" />
+            <motion.div
+              style={{ scaleX: p }}
+              className="h-full origin-left bg-primary"
+            />
           </div>
         </div>
       )}
