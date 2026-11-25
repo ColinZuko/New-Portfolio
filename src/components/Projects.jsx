@@ -130,19 +130,12 @@ const Projects = () => {
     },
     {
       id: 7,
-      title: "Stock Finder for FixJeFilament",
+      title: "Stock Finder",
       desc: "A mobile tool I built during my internship so store staff can check stock in seconds, by typing a few letters or scanning a barcode.",
       process:
         "Staff had to search the customer website to find out if more filament was in the back. I built a Python/Flask backend on the WooCommerce REST API and a lightweight mobile page with live search, a barcode scanner (EAN and Code 128, on Android and iPhone) and a pick list for restocking. I measured and fixed performance step by step: from 2.3 s per search to about 1.5 ms by caching all products in memory. Along the way I debugged a production-only bug where Gunicorn's forked worker never received the cache thread. The project has pytest tests running on every push via GitHub Actions, and a public demo with fake data.",
       image: project7,
-      tags: [
-        "Python",
-        "Flask",
-        "JavaScript",
-        "REST API",
-        "pytest",
-        "GitHub Actions",
-      ],
+      tags: ["Python", "Flask", "JavaScript", "pytest"],
       demoLink: "https://colinzuko.github.io/Voorraad-zoeker/",
       siteLink: "https://github.com/ColinZuko/Voorraad-zoeker",
     },
