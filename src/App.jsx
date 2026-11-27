@@ -8,7 +8,7 @@ import Skills from "./components/Skills"
 import Projects from "./components/Projects"
 import Contact from "./components/Contact"
 import Footer from "./components/Footer"
-import Marquee from "./components/Marquee"
+import RouteLine from "./components/RouteLine"
 
 const App = () => {
   useEffect(() => {
@@ -23,13 +23,12 @@ const App = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <main>
+      <main className="relative">
+        <RouteLine />
         <Hero />
-        <Marquee />
         <About />
         <Skills />
         <Projects />
-        <Marquee />
         <Contact />
       </main>
       <Footer />

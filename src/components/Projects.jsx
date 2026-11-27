@@ -3,7 +3,6 @@ import {
   motion,
   useScroll,
   useTransform,
-  useSpring,
   useReducedMotion,
 } from "framer-motion";
 import { ArrowUpRight, X } from "lucide-react";
@@ -29,14 +28,20 @@ const Tags = ({ tags }) => (
   </ul>
 );
 
-const ProjectCard = ({ project, progress, reduce, onOpen }) => {
-  // image slides inside its frame against the track direction, card swings in 3D
-  const imgX = useTransform(progress, [0, 1], ["-12%", "12%"]);
-  const rotateY = useTransform(progress, [0, 1], [-18, 18]);
+const ProjectCard = ({ project, onOpen, drift, reduce }) => {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  // the screenshot drifts a little inside its frame while the card scrolls past
+  const imgY = useTransform(scrollYProgress, [0, 1], ["-7%", "7%"]);
+
   return (
     <motion.li
-      style={reduce ? undefined : { rotateY }}
-      className={`flex flex-col overflow-hidden rounded-2xl bg-background shadow-2xl ${reduce ? "" : "w-[80vw] max-w-md shrink-0"}`}
+      ref={ref}
+      style={reduce ? undefined : { y: drift }}
+      className="flex flex-col overflow-hidden rounded-2xl bg-background"
     >
       <button
         type="button"
@@ -44,12 +49,16 @@ const ProjectCard = ({ project, progress, reduce, onOpen }) => {
         className="group flex flex-1 flex-col text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
       >
         <div className="aspect-video w-full overflow-hidden">
-          <motion.img
-            src={project.image}
-            alt=""
-            style={reduce ? undefined : { x: imgX, scale: 1.3 }}
-            className="h-full w-full object-cover"
-          />
+          <motion.div
+            style={reduce ? undefined : { y: imgY, scale: 1.15 }}
+            className="h-full w-full"
+          >
+            <img
+              src={project.image}
+              alt=""
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transition-none"
+            />
+          </motion.div>
         </div>
         <div className="flex flex-1 flex-col p-5">
           <h3 className="mb-1 text-lg font-semibold">{project.title}</h3>
@@ -91,30 +100,22 @@ const Projects = () => {
 
   const reduce = useReducedMotion();
   const sectionRef = useRef(null);
-  const trackRef = useRef(null);
-  const [distance, setDistance] = useState(0);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start start", "end end"],
+    offset: ["start end", "end start"],
   });
-  const p = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 30,
-    mass: 0.4,
-  });
-  const x = useTransform(p, (v) => -v * distance);
-  const bgX = useTransform(p, [0, 1], ["10%", "-70%"]);
-  const headY = useTransform(p, [0, 1], [0, -60]);
-
-  // how far the track must slide so its last card ends up on screen
+  // on the 3-column desktop grid the middle column scrolls a bit faster than the outer ones
+  const outer = useTransform(scrollYProgress, [0, 1], [30, -30]);
+  const middle = useTransform(scrollYProgress, [0, 1], [90, -90]);
+  const [threeColumns, setThreeColumns] = useState(
+    () => window.matchMedia("(min-width: 1024px)").matches,
+  );
   useEffect(() => {
-    if (reduce) return;
-    const measure = () =>
-      setDistance(trackRef.current.scrollWidth - window.innerWidth);
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [reduce]);
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const onChange = (e) => setThreeColumns(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   const projects = [
     {
@@ -207,79 +208,43 @@ const Projects = () => {
     };
   }, [selectedProject]);
 
-  const card = (project) => (
-    <ProjectCard
-      key={project.id}
-      project={project}
-      progress={p}
-      reduce={reduce}
-      onOpen={() => setSelectedProject(project)}
-    />
-  );
-  const githubLink = (
-    <a
-      href="https://github.com/ColinZuko?tab=repositories"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-medium text-primary-foreground transition-opacity hover:opacity-85"
-    >
-      <FaGithub aria-hidden="true" />
-      View All Projects on GitHub
-    </a>
-  );
-
   return (
-    <section
-      id="projects"
-      ref={sectionRef}
-      className="relative bg-card"
-      style={reduce ? undefined : { height: `${projects.length * 60 + 100}vh` }}
-    >
-      {reduce ? (
-        <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 sm:py-28">
-          <h2 className="mb-12 text-center text-4xl font-semibold sm:text-5xl">
-            Projects
-          </h2>
-          <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map(card)}
-          </ul>
-          <div className="mt-12 text-center">{githubLink}</div>
+    <section id="projects" ref={sectionRef} className="bg-card py-20 sm:py-28">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="mb-12 text-center" data-aos="fade-up">
+          <h2 className="mb-3 text-4xl font-semibold sm:text-5xl">Projects</h2>
+          <p className="text-lg text-muted-foreground">
+            A showcase of my recent work
+          </p>
         </div>
-      ) : (
-        <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden [perspective:1000px]">
-          <motion.p
-            aria-hidden="true"
-            style={{ x: bgX }}
-            className="pointer-events-none absolute bottom-0 whitespace-nowrap text-[30vw] font-black leading-none tracking-tighter text-foreground/[0.04] select-none"
-          >
-            SELECTED WORK
-          </motion.p>
-          <motion.div style={{ y: headY }} className="mb-10 px-4 text-center">
-            <h2 className="mb-3 text-4xl font-semibold sm:text-5xl">
-              Projects
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              A showcase of my recent work
-            </p>
-          </motion.div>
-          <motion.ul
-            ref={trackRef}
-            style={{ x }}
-            className="flex w-max items-center gap-8 px-[10vw]"
-          >
-            {projects.map(card)}
-            <li className="flex w-[80vw] max-w-sm shrink-0 justify-center">
-              {githubLink}
-            </li>
-          </motion.ul>
-          <div className="mx-auto mt-10 h-1 w-48 overflow-hidden rounded-full bg-secondary">
-            <motion.div
-              style={{ scaleX: p }}
-              className="h-full origin-left bg-primary"
+
+        <ul
+          className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
+          data-aos="fade-up"
+        >
+          {projects.map((project, i) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              reduce={reduce}
+              drift={threeColumns ? (i % 3 === 1 ? middle : outer) : undefined}
+              onOpen={() => setSelectedProject(project)}
             />
-          </div>
+          ))}
+        </ul>
+
+        <div className="mt-12 text-center">
+          <a
+            href="https://github.com/ColinZuko?tab=repositories"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-medium text-primary-foreground transition-opacity hover:opacity-85"
+          >
+            <FaGithub aria-hidden="true" />
+            View All Projects on GitHub
+          </a>
         </div>
-      )}
+      </div>
 
       {/* Overlay Modal */}
       {selectedProject && (
